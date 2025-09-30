@@ -1,0 +1,36 @@
+# Docker Compose untuk Ayadesign Application (menggunakan Docker Hub image)
+version: '3.8'
+
+services:
+  ayadesign-app:
+    container_name: ayadesign-app-hub
+    image: irfnriza/ayadesign-app:submit-UTS
+    ports:
+      - "3000:3000"  # Backend API
+      - "5173:5173"  # Frontend
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./server/uploads:/app/server/uploads
+    networks:
+      - ayadesign-network
+
+  # Optional: MongoDB container (jika ingin database lokal)
+  mongodb:
+    image: mongo:7.0
+    container_name: ayadesign-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=ayadesign
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - ayadesign-network
+
+networks:
+  ayadesign-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
