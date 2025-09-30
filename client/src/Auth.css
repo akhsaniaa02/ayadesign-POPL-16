@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+body.auth-body{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background:  #a55253; /* Change to the desired hover color */
+}
+.form-container{
+    width: 1000px;
+    background-color: rgba(255, 255, 255, 0.9); /* Putih dengan sedikit transparansi */
+    
+}
+.color1 {
+    color: #BA6264;
+  }
+.title, 
+.slogan{
+    text-align: center;
+}
+.auth-btn {
+    width: 100%;
+    background-color: #BA6264;
+    transition: background-color 0.3s ease; /* Optional: for smooth transition */
+    
+  }
+  
+  .auth-btn:hover {
+    background-color: #a55253; /* Change to the desired hover color */
+  }
+  
+.auth-image{
+    width: 90%;
+    height: auto;
+    border-radius: 8px;
+}
+.alert{
+    margin-bottom: 1.5rem;
+}
+
+/* profiie */
+.profile-card{
+    width: 500px;
+}
+.avatar{
+    margin-bottom: 1.5rem;
+}
+.username{
+    text-transform: capitalize;
+}
+.profile-btn{
+    margin-top: 1.3rem;
+    width: 100%;
+}
+.link-back {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #000; 
+    border-radius: 19px;
+    text-decoration: none; 
+    color: #000;
+    font-weight: bolder;
+  }
+  
+  .link-back:hover {
+    background-color: #dbbfbf;
+    color: #000000;
+  }
+  
