@@ -18,6 +18,7 @@ import EditProductPage from './Pages/admin/EditProductPage';
 import ProductDetail from './Pages/user/ProductDetail';
 import CartPage from './Pages/user/CartPage';
 import OrderDetail from './Pages/user/OrderDetail';
+import MyOrders from './Pages/user/MyOrders';
 import ScrollToTop from './Components/Elements/ScrollToTop';
 import { ProtectedRoute, AdminRoute } from './Components/ProtectedRoute';
 
@@ -39,6 +40,7 @@ const App = () => {
         <Route path="/productdetail/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
         <Route path="/cart/detail/" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
+        <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
         
         {/* Admin Routes - Protected */}
         <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />

@@ -38,6 +38,7 @@ const Nav = () => {
                             <Link to="/" className="mr-5 hover:text-gray-900 text-xl">Home</Link>
                             <Link to="/about" className="mr-5 hover:text-gray-900 text-xl">About Us</Link>
                             <Link to="/ProductCatalog" className="mr-5 hover:text-gray-900 text-xl">Go Shopping</Link>
+                            <Link to="/my-orders" className="mr-5 hover:text-gray-900 text-xl">My Orders</Link>
                             
                             {/* Admin Panel Button - Only show for admin users */}
                             {userData?.role === 'admin' && (

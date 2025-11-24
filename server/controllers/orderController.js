@@ -256,6 +256,50 @@ exports.getAllOrders = async (req, res) => {
     }
 };
 
+// Get user's own orders (User - authenticated)
+exports.getUserOrders = async (req, res) => {
+    try {
+        console.log("GET /my-orders - User request received");
+        
+        // Get user ID from authenticated user (set by protect middleware)
+        const userId = req.user._id;
+
+        // Get all transactions for this user
+        const orders = await Transaksi.find({ user_id: userId })
+            .populate('user_id', 'name email')
+            .sort({ createdAt: -1 }); // Sort by newest first
+
+        // Get transaction items for each order
+        const ordersWithItems = await Promise.all(
+            orders.map(async (order) => {
+                const items = await TransaksiItem.find({ transaksi_id: order._id });
+                return {
+                    _id: order._id,
+                    user: order.user_id,
+                    total_harga: order.total_harga,
+                    status: order.status,
+                    createdAt: order.createdAt,
+                    updatedAt: order.updatedAt,
+                    items: items
+                };
+            })
+        );
+
+        res.status(200).json({
+            success: true,
+            count: ordersWithItems.length,
+            data: ordersWithItems
+        });
+    } catch (error) {
+        console.error("Error fetching user orders:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching your orders',
+            error: error.message
+        });
+    }
+};
+
 // Update order status (Admin only)
 exports.updateOrderStatus = async (req, res) => {
     try {

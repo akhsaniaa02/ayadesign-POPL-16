@@ -14,7 +14,8 @@ const {
     removeFromCart, 
     checkout,
     getAllOrders,
-    updateOrderStatus
+    updateOrderStatus,
+    getUserOrders
 } = require('../controllers/orderController');
 const { protect } = require('../middlewares/authMiddleware');
 const { isAdmin } = require('../middlewares/adminMiddleware');
@@ -36,6 +37,9 @@ router.delete('/cart/:id', protect, removeFromCart);
 
 // Checkout route - Protected (user must be logged in)
 router.post('/checkout', protect, checkout);
+
+// User Order Routes (Protected - User must be logged in)
+router.get('/my-orders', protect, getUserOrders);
 
 // Admin Order Management Routes (Protected - Admin only)
 router.get('/orders', protect, isAdmin, getAllOrders);
