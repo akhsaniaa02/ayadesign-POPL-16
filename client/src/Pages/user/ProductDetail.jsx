@@ -13,6 +13,9 @@ const ProductDetail = () => {
 
     const [formData, setFormData] = useState({});
     const inputRefs = useRef({});
+    
+    // Check if user is admin
+    const isAdmin = userData?.role === 'admin';
 
     // Function to handle form submission
     const handleSubmit = async () => {
@@ -137,33 +140,36 @@ const ProductDetail = () => {
                     <p className="font-semibold">Rp. 35.000</p>
                 </div>
             </div>
-            <div className="container mx-auto px-4">
-                <h2 className="text-lg font-semibold mb-4">Isi Detail Pemesanan</h2>
-                <div className="mb-8">
-                    <input
-                        type="text"
-                        ref={el => inputRefs.current.judul = el}
-                        id="judul"
-                        name="judul"
-                        placeholder="Judul Banner"
-                        className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    />
+            {/* Form Section - Only show for non-admin users */}
+            {!isAdmin && (
+                <div className="container mx-auto px-4">
+                    <h2 className="text-lg font-semibold mb-4">Isi Detail Pemesanan</h2>
+                    <div className="mb-8">
+                        <input
+                            type="text"
+                            ref={el => inputRefs.current.judul = el}
+                            id="judul"
+                            name="judul"
+                            placeholder="Judul Banner"
+                            className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        />
+                    </div>
+                    {item.formQuantity > 0 && (
+                        <>
+                            <h3 className="text-md font-semibold mb-4">Detail Nama dan Deskripsi</h3>
+                            {fields}
+                        </>
+                    )}
+                    <div className="mb-4">
+                        <Button
+                            onClick={handleSubmit}
+                            className='inline-flex items-center justify-center px-4 py-2 text-white bg-[#BA6264] border border-transparent rounded-xl font-medium hover:bg-[#A65253] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#BA6264] shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl'
+                        >
+                            Add To Cart
+                        </Button>
+                    </div>
                 </div>
-                {item.formQuantity > 0 && (
-                    <>
-                        <h3 className="text-md font-semibold mb-4">Detail Nama dan Deskripsi</h3>
-                        {fields}
-                    </>
-                )}
-                <div className="mb-4">
-                    <Button
-                        onClick={handleSubmit}
-                        className='inline-flex items-center justify-center px-4 py-2 text-white bg-[#BA6264] border border-transparent rounded-xl font-medium hover:bg-[#A65253] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#BA6264] shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl'
-                    >
-                        Add To Cart
-                    </Button>
-                </div>
-            </div>
+            )}
         </div>
     );
 };

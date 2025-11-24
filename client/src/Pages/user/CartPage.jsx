@@ -15,6 +15,16 @@ const CartPage = () => {
       navigate('/login'); // Redirect if not authenticated
       return;
     }
+    
+    // Redirect admin to dashboard if they try to access cart
+    if (userData?.role === 'admin') {
+      notification.warning({
+        message: 'Access Denied',
+        description: 'Admin users cannot access the cart. This feature is for customers only.',
+      });
+      navigate('/admin');
+      return;
+    }
 
     const fetchOrders = async () => {
       try {
