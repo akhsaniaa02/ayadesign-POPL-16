@@ -12,6 +12,9 @@ import Faq from './Pages/user/Faq';
 import HowToOrder from './Pages/user/HowToOrder';
 import ProductCatalog from './Pages/user/ProductCatalog';
 import InsertDataPage from './Pages/admin/InsertDataPage';
+import AdminDashboard from './Pages/admin/AdminDashboard';
+import AdminOrders from './Pages/admin/AdminOrders';
+import EditProductPage from './Pages/admin/EditProductPage';
 import ProductDetail from './Pages/user/ProductDetail';
 import CartPage from './Pages/user/CartPage';
 import OrderDetail from './Pages/user/OrderDetail';
@@ -38,7 +41,11 @@ const App = () => {
         <Route path="/cart/detail/" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
         
         {/* Admin Routes - Protected */}
-        <Route path="/admin" element={<AdminRoute><InsertDataPage /></AdminRoute>} />
+        <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="/admin/products" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+        <Route path="/admin/insert" element={<AdminRoute><InsertDataPage /></AdminRoute>} />
+        <Route path="/admin/edit/:id" element={<AdminRoute><EditProductPage /></AdminRoute>} />
         <Route path="/insert" element={<AdminRoute><InsertDataPage /></AdminRoute>} />
       
       </Routes>

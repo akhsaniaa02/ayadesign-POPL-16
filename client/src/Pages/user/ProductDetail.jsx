@@ -9,7 +9,7 @@ const ProductDetail = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { item } = location.state;
-    const { userData, isAuthenticated } = useAuth();
+    const { userData, isAuthenticated, token } = useAuth();
 
     const [formData, setFormData] = useState({});
     const inputRefs = useRef({});
@@ -30,8 +30,7 @@ const ProductDetail = () => {
             name: '',
             description: '',
             imageUrl: item.imageUrl,
-            price: item.price,
-            user_id: userData._id // Ensure this is correctly set to a valid user ID
+            price: item.price
         };
 
         for (let i = 1; i <= item.formQuantity; i++) {
@@ -50,6 +49,7 @@ const ProductDetail = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(newData),
             });

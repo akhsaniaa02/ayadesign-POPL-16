@@ -60,3 +60,129 @@ exports.getImageCarousel = async (req, res) => {
         res.status(500).json({ message: 'Server Error', error: err.message });
     }
 };
+
+// Get all products (for admin panel)
+exports.getAllProducts = async (req, res) => {
+    console.log("GET /products - Admin request received");
+    try {
+        const products = await ImageCarousel.find().sort({ createdAt: -1 });
+        res.status(200).json({
+            success: true,
+            count: products.length,
+            data: products
+        });
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error fetching products', 
+            error: error.message 
+        });
+    }
+};
+
+// Get single product by ID
+exports.getProductById = async (req, res) => {
+    console.log("GET /product/:id request received");
+    try {
+        const product = await ImageCarousel.findById(req.params.id);
+        
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: product
+        });
+    } catch (error) {
+        console.error("Error fetching product:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching product',
+            error: error.message
+        });
+    }
+};
+
+// Update product
+exports.updateProduct = async (req, res) => {
+    console.log("PUT /product/:id request received");
+    try {
+        const { id, title, description, price, imageUrl, formQuantity, category } = req.body;
+
+        // Find and update product
+        const product = await ImageCarousel.findByIdAndUpdate(
+            req.params.id,
+            {
+                id,
+                title,
+                description,
+                price,
+                imageUrl,
+                formQuantity,
+                category
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        console.log("Product updated successfully:", product);
+        res.status(200).json({
+            success: true,
+            message: 'Product updated successfully',
+            data: product
+        });
+    } catch (error) {
+        console.error("Error updating product:", error);
+        if (error.code === 11000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Product ID already exists'
+            });
+        }
+        res.status(500).json({
+            success: false,
+            message: 'Error updating product',
+            error: error.message
+        });
+    }
+};
+
+// Delete product
+exports.deleteProduct = async (req, res) => {
+    console.log("DELETE /product/:id request received");
+    try {
+        const product = await ImageCarousel.findByIdAndDelete(req.params.id);
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        console.log("Product deleted successfully:", product);
+        res.status(200).json({
+            success: true,
+            message: 'Product deleted successfully',
+            data: product
+        });
+    } catch (error) {
+        console.error("Error deleting product:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Error deleting product',
+            error: error.message
+        });
+    }
+};
