@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { baseURL } from '../../api/private.client';
 import Layout from '../../Components/Layouts/Layout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const InsertDataPage = () => {
+    const { token } = useAuth();
     const [items, setItems] = useState([{ id: '', imageUrl: '', title: '', description: '', price: '', formQuantity: 1, category: 'photocard' }]);
 
     const handleChange = (index, event) => {
@@ -20,7 +22,15 @@ const InsertDataPage = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post(`${baseURL}/api/insert`, { items });
+            const response = await axios.post(`${baseURL}/api/insert`, 
+                { items },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
             alert(response.data.message || 'Data inserted successfully!');
             // Reset form after successful submission
             setItems([{ id: '', imageUrl: '', title: '', description: '', price: '', formQuantity: 1, category: 'photocard' }]);
