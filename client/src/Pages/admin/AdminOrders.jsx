@@ -3,11 +3,10 @@ import axios from 'axios';
 import { baseURL } from '../../api/private.client';
 import { useAuth } from '../../contexts/AuthContext';
 import Layout from '../../Components/Layouts/Layout';
-import { message, Table, Tag, Button, Modal, Space, Collapse, Card } from 'antd';
-import { EyeOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+import { message, Table, Tag, Button, Modal, Space, Card } from 'antd';
+import { EyeOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined, ShoppingOutlined, AppstoreOutlined } from '@ant-design/icons';
 import moment from 'moment';
-
-const { Panel } = Collapse;
 
 const AdminOrders = () => {
     const { token } = useAuth();
@@ -181,9 +180,35 @@ const AdminOrders = () => {
     return (
         <Layout>
             <div className="container mx-auto px-4 py-8">
+                {/* Header with Navigation */}
+                <div className="mb-6">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-4">Admin Dashboard</h1>
+                    
+                    {/* Navigation Menu */}
+                    <div className="flex gap-4 mb-6">
+                        <Link to="/admin/products">
+                            <Button 
+                                type="default" 
+                                icon={<AppstoreOutlined />}
+                            >
+                                Products
+                            </Button>
+                        </Link>
+                        <Link to="/admin/orders">
+                            <Button 
+                                type="primary"
+                                icon={<ShoppingOutlined />}
+                                className="bg-[#BA6264] hover:bg-[#a55253]"
+                            >
+                                Orders
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+
                 <div className="flex justify-between items-center mb-6">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-800">Order Management</h1>
+                        <h2 className="text-2xl font-semibold text-gray-700">Order Management</h2>
                         <p className="text-gray-600 mt-1">View and manage customer orders</p>
                     </div>
                     <Button onClick={fetchOrders} loading={loading}>
