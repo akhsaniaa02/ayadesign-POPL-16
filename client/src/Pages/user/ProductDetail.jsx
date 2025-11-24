@@ -16,6 +16,16 @@ const ProductDetail = () => {
     
     // Check if user is admin
     const isAdmin = userData?.role === 'admin';
+    
+    // Helper function to get full image URL
+    const getImageUrl = (imageUrl) => {
+        // If imageUrl starts with /uploads (local file), prepend baseURL
+        if (imageUrl && imageUrl.startsWith('/uploads')) {
+            return baseURL + imageUrl;
+        }
+        // Otherwise return as-is (Cloudinary URL or external URL)
+        return imageUrl;
+    };
 
     // Function to handle form submission
     const handleSubmit = async () => {
@@ -122,7 +132,7 @@ const ProductDetail = () => {
             </div>
             <div className="flex my-4">
                 <div className="w-4/12 p-4 mx-4 ml-12 mr-4">
-                    <img src={item.imageUrl} alt="Foto" />
+                    <img src={getImageUrl(item.imageUrl)} alt="Foto" />
                 </div>
                 <div className="w-3/12 p-4">
                     <h2 className="text-xl font-semibold mb-3">{item.title === "B&W Banner" ? "Design Banner" : "Design Photocard"}</h2>

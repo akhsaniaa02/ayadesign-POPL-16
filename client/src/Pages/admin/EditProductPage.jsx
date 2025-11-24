@@ -21,6 +21,16 @@ const EditProductPage = () => {
         formQuantity: 1,
         category: 'photocard'
     });
+    
+    // Helper function to get full image URL
+    const getImageUrl = (imageUrl) => {
+        // If imageUrl starts with /uploads (local file), prepend baseURL
+        if (imageUrl && imageUrl.startsWith('/uploads')) {
+            return baseURL + imageUrl;
+        }
+        // Otherwise return as-is (Cloudinary URL or external URL)
+        return imageUrl;
+    };
 
     useEffect(() => {
         fetchProduct();
@@ -159,7 +169,7 @@ const EditProductPage = () => {
                             <div className="mt-3">
                                 <p className="text-sm text-gray-600 mb-2">Image Preview:</p>
                                 <img 
-                                    src={product.imageUrl} 
+                                    src={getImageUrl(product.imageUrl)} 
                                     alt="Preview" 
                                     className="w-40 h-40 object-cover rounded-lg border"
                                     onError={(e) => {

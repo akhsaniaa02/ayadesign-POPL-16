@@ -12,6 +12,16 @@ const AdminDashboard = () => {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
+    
+    // Helper function to get full image URL
+    const getImageUrl = (imageUrl) => {
+        // If imageUrl starts with /uploads (local file), prepend baseURL
+        if (imageUrl && imageUrl.startsWith('/uploads')) {
+            return baseURL + imageUrl;
+        }
+        // Otherwise return as-is (Cloudinary URL or external URL)
+        return imageUrl;
+    };
 
     useEffect(() => {
         fetchProducts();
@@ -73,7 +83,7 @@ const AdminDashboard = () => {
             width: 100,
             render: (imageUrl) => (
                 <img 
-                    src={imageUrl} 
+                    src={getImageUrl(imageUrl)} 
                     alt="product" 
                     style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 8 }}
                 />

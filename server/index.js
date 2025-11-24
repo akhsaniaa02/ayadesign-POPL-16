@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/auth', authRouter);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Updated path for uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve uploaded files
 app.use('/api', orderRoute); // Added /api prefix for better organization
 
 // 404 handler

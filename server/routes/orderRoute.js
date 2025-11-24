@@ -1,5 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
+const cloudinary = require('../config/cloudinary');
 const { 
     insertData, 
     getImageCarousel, 
@@ -20,11 +23,29 @@ const {
 const { protect } = require('../middlewares/authMiddleware');
 const { isAdmin } = require('../middlewares/adminMiddleware');
 
+// Multer configuration for Cloudinary upload
+const storage = multer.memoryStorage(); // Store in memory, then upload to Cloudinary
+
+const upload = multer({ 
+    storage: storage,
+    fileFilter: function (req, file, cb) {
+        const filetypes = /jpeg|jpg|png|gif|webp/;
+        const mimetype = filetypes.test(file.mimetype);
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        
+        if (mimetype && extname) {
+            return cb(null, true);
+        }
+        cb(new Error('Only image files are allowed!'));
+    },
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
+
 // Carousel routes (Public)
 router.get('/imageCarousel', getImageCarousel);
 
 // Admin Product Management Routes (Protected - Admin only)
-router.post('/insert', protect, isAdmin, insertData); 
+router.post('/insert', protect, isAdmin, upload.array('images'), insertData); 
 router.get('/products', protect, isAdmin, getAllProducts);
 router.get('/product/:id', protect, isAdmin, getProductById);
 router.put('/product/:id', protect, isAdmin, updateProduct);

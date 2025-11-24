@@ -1,30 +1,68 @@
 const ImageCarousel = require('../models/imageModels');
+const cloudinary = require('../config/cloudinary');
 
 exports.insertData = async (req, res) => {
-    const { items } = req.body;
-    console.log("Insert request received:", items); // ✅ log request data
+    console.log("Insert request received");
+    console.log("Body:", req.body);
+    console.log("Files:", req.files);
+    
     try {
+        const items = JSON.parse(req.body.items);
+        const files = req.files || [];
+        
         // Validate items array
         if (!items || !Array.isArray(items)) {
             return res.status(400).json({ message: 'Items array is required' });
         }
 
-        // Validate each item
-        for (let item of items) {
-            if (!item.id || !item.title || !item.price || !item.imageUrl) {
-                return res.status(400).json({ message: 'Missing required fields: id, title, price, imageUrl' });
-            }
-        }
+        // Upload files to Cloudinary and process items
+        const uploadPromises = files.map((file) => {
+            return new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    {
+                        folder: 'ayadesign/products',
+                        resource_type: 'auto',
+                        transformation: [
+                            { width: 1000, height: 1000, crop: 'limit' },
+                            { quality: 'auto:good' }
+                        ]
+                    },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result.secure_url);
+                    }
+                );
+                uploadStream.end(file.buffer);
+            });
+        });
 
-        const result = await ImageCarousel.insertMany(items);
-        console.log("Insert success:", result); // ✅ log hasil insert
+        const uploadedUrls = await Promise.all(uploadPromises);
+
+        // Process each item and attach image URLs
+        const processedItems = items.map((item, index) => {
+            // If file uploaded for this item, use Cloudinary URL
+            if (uploadedUrls[index]) {
+                item.imageUrl = uploadedUrls[index];
+            }
+            // Otherwise keep the provided imageUrl (for URL input)
+            
+            // Validate required fields
+            if (!item.id || !item.title || !item.price || !item.imageUrl) {
+                throw new Error('Missing required fields: id, title, price, and image');
+            }
+            
+            return item;
+        });
+
+        const result = await ImageCarousel.insertMany(processedItems);
+        console.log("Insert success:", result);
         res.status(201).json({ 
             message: 'Data inserted successfully',
             count: result.length,
             data: result
         });
     } catch (error) {
-        console.error("Insert error:", error); // ❌ log error
+        console.error("Insert error:", error);
         if (error.code === 11000) {
             res.status(400).json({ message: 'Duplicate ID found. Please use unique IDs.' });
         } else {
