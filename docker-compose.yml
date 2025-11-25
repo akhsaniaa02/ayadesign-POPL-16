@@ -9,10 +9,17 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"  # Backend API
+      - "3001:3001"  # Backend API
       - "5173:5173"  # Frontend
     environment:
       - NODE_ENV=production
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - PORT=3001
+      # Cloudinary credentials
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
     volumes:
       - ./server/uploads:/app/server/uploads
     networks:

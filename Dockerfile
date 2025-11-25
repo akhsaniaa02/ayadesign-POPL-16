@@ -25,29 +25,29 @@ COPY client/ ./client/
 # Build frontend
 RUN cd client && npm run build
 
-# Create uploads directory
-RUN mkdir -p ./server/uploads
+# Create uploads directory (for backward compatibility, though Cloudinary is primary)
+RUN mkdir -p ./server/uploads/products
 
 # Expose ports
-EXPOSE 3000 5173
+EXPOSE 3001 5173
 
 # Create and set startup script
 RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'echo "🚀 Starting Ayadesign Application..."' >> /app/start.sh && \
-    echo 'echo "📡 Starting backend server on port 3000..."' >> /app/start.sh && \
+    echo 'echo "📡 Starting backend server on port 3001..."' >> /app/start.sh && \
     echo 'cd /app/server && node index.js &' >> /app/start.sh && \
     echo 'echo "🌐 Starting frontend server on port 5173..."' >> /app/start.sh && \
     echo 'cd /app && serve -s client/dist -l 5173 &' >> /app/start.sh && \
     echo 'echo "✅ Application started successfully!"' >> /app/start.sh && \
     echo 'echo "Frontend: http://localhost:5173"' >> /app/start.sh && \
-    echo 'echo "Backend: http://localhost:3000"' >> /app/start.sh && \
+    echo 'echo "Backend: http://localhost:3001"' >> /app/start.sh && \
     echo 'wait' >> /app/start.sh
 
 RUN chmod +x /app/start.sh
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:3000/ || exit 1
+    CMD curl -f http://localhost:3001/ || exit 1
 
 # Start application
 CMD ["/app/start.sh"]
