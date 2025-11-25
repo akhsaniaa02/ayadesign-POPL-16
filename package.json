@@ -4,10 +4,11 @@
   "description": "AyaDesign Backend API",
   "main": "api/index.js",
   "scripts": {
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "build": "echo 'No build step required for serverless functions'"
   },
   "dependencies": {},
   "engines": {
-    "node": ">=18.x"
+    "node": "18.x"
   }
 }
