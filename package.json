@@ -1,0 +1,13 @@
+{
+  "name": "ayadesign-api",
+  "version": "1.0.0",
+  "description": "AyaDesign Backend API",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.x"
+  }
+}
