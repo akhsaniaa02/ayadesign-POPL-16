@@ -1,4 +1,4 @@
-﻿# Aya Design
+﻿git # Aya Design
 
 Selamat datang di Aya Design, platform e-commerce tempat Anda dapat memesan berbagai desain kustom kekinian seperti photocard, banner, dan desain dengan bingkai akrilik. Proyek ini dibangun dengan MERN stack (MongoDB, Express.js, React, Node.js) dan dirancang untuk memberikan pengalaman pemesanan yang mulus dan ramah pengguna.
 

@@ -1,0 +1,49 @@
+# Fly.io Configuration
+app = "ayadesign-popl-16"
+primary_region = "sin"  # Singapore - ganti sesuai region terdekat
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "3001"
+  # Environment variables lainnya akan di-set via Fly.io secrets
+
+[http_service]
+  internal_port = 5173  # Frontend port
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "10s"
+    method = "GET"
+    path = "/"
+    protocol = "http"
+
+# Service untuk backend API
+[[services]]
+  protocol = "tcp"
+  internal_port = 3001
+  
+  [[services.ports]]
+    port = 3001
+    handlers = ["http"]
+  
+  [[services.tcp_checks]]
+    interval = "15s"
+    timeout = "2s"
+    grace_period = "5s"
+
+[mounts]
+  source = "uploads_data"
+  destination = "/app/server/uploads"
+  initial_size = "1gb"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512
