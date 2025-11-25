@@ -1,0 +1,251 @@
+# ==========================================
+# Environment Variables & Secrets
+# ==========================================
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.production
+.env.staging
+.env.development
+*.env
+!.env.example
+!.env.template
+
+# Server environment files
+server/.env
+server/.env.*
+server/*.env
+
+# Client environment files
+client/.env
+client/.env.*
+client/*.env
+
+# Docker environment files
+.env.docker
+
+# Fly.io secrets
+.fly/
+
+# ==========================================
+# Dependencies
+# ==========================================
+node_modules/
+*/node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+package-lock.json.bak
+yarn.lock.bak
+
+# ==========================================
+# Build outputs
+# ==========================================
+dist/
+dist-ssr/
+build/
+out/
+client/dist/
+client/build/
+server/dist/
+server/build/
+*.local
+
+# ==========================================
+# Logs
+# ==========================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+*.log.*
+
+# ==========================================
+# Runtime & Temporary files
+# ==========================================
+.DS_Store
+*.pid
+*.seed
+*.pid.lock
+pids/
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Coverage reports
+coverage/
+*.lcov
+.nyc_output/
+
+# ==========================================
+# Database & Uploads
+# ==========================================
+# Local database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Uploaded files (should be in cloud storage)
+server/uploads/*
+!server/uploads/.gitkeep
+client/public/uploads/*
+!client/public/uploads/.gitkeep
+uploads/
+
+# ==========================================
+# IDE & Editor files
+# ==========================================
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# VS Code specific
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/*.code-workspace
+
+# ==========================================
+# OS generated files
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ==========================================
+# Docker
+# ==========================================
+docker-compose.override.yml
+.dockerignore.local
+
+# ==========================================
+# SSL/TLS Certificates & Keys
+# ==========================================
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
+ssl/
+certs/
+
+# ==========================================
+# Cloud Platform Credentials
+# ==========================================
+# AWS
+.aws/
+aws-credentials.json
+
+# GCP
+gcp-credentials.json
+*-service-account.json
+google-credentials.json
+
+# Azure
+.azure/
+azure-credentials.json
+
+# Render
+render.yaml.local
+
+# ==========================================
+# CI/CD & Deployment
+# ==========================================
+.github/workflows/*.local.yml
+deployment-secrets.yml
+
+# ==========================================
+# Backup files
+# ==========================================
+*.bak
+*.backup
+*.old
+*.orig
+*~
+
+# ==========================================
+# Testing
+# ==========================================
+.nyc_output/
+coverage/
+*.coverage
+.hypothesis/
+.pytest_cache/
+.tox/
+
+# ==========================================
+# Miscellaneous
+# ==========================================
+*.cache
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.vuepress/dist/
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.npm
+.eslintcache
+.stylelintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# ==========================================
+# Application Specific
+# ==========================================
+# MongoDB dumps
+*.dump
+dump/
+
+# Redis dumps
+*.rdb
+
+# Session files
+sessions/
+
+# Config files with secrets
+config/secrets.js
+config/production.js
+config/local.js
