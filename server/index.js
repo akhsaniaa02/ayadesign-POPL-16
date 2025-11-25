@@ -10,7 +10,8 @@ mongoose.set('strictQuery', true);
 // Middlewares
 app.use(cors({
     origin: [
-        'https://ayadesign.vercel.app',
+        process.env.FRONTEND_URL || 'http://localhost:5173',
+        'https://ayadesignstore.vercel.app',
         'https://ayadesign-muhammadbintang27s-projects.vercel.app', 
         'http://localhost:5173',
         'https://ayadesign-platform.vercel.app/'
@@ -65,6 +66,13 @@ app.use((err, req, res, next) => {
 
 // Server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+
+// Export for Vercel serverless
+module.exports = app;
+
+// Only start server if not in serverless environment
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}

@@ -13,6 +13,7 @@
 *.env
 !.env.example
 !.env.template
+.env.docker
 
 # Server environment files
 server/.env
