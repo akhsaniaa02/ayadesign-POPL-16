@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "name": "ayadesign-client",
+  "buildCommand": "cd client && npm install && npm run build",
+  "outputDirectory": "client/dist",
+  "framework": "vite",
+  "installCommand": "cd client && npm install"
+}

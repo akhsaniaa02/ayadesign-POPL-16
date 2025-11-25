@@ -12,6 +12,16 @@ server/dist/
 .env.local
 .env.production
 
+# GitHub
+.git/
+.github/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!README.md
+
 # Logs
 logs/
 *.log
@@ -24,6 +34,11 @@ pids/
 
 # Coverage directory used by tools like istanbul
 coverage/
+
+# Testing
+**/__tests__/
+**/*.test.js
+**/*.spec.js
 
 # OS generated files
 .DS_Store

@@ -9,22 +9,17 @@ const jwt = require('jsonwebtoken');
 
 exports.addToCart = async (req, res) => {
     try {
+        const { title, name, description, imageUrl, price } = req.body;
 
-        const { title, name, description, imageUrl, price, user_id } = req.body;
-
-        // Check if the user ID is a valid ObjectId
-        if (!mongoose.Types.ObjectId.isValid(user_id)) {
-            return res.status(400).json({ error: 'Invalid user ID' });
-        }
-
-        // Convert user_id to ObjectId
-        const userIdObj = new mongoose.Types.ObjectId(user_id);
+        // Get user ID from authenticated user (set by protect middleware)
+        const userId = req.user._id;
 
         // Find the user by ID
-        const user = await User.findById(userIdObj);
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
+        
         // Create a new cart item
         const newCart = new Cart({
             title,
@@ -32,7 +27,7 @@ exports.addToCart = async (req, res) => {
             description,
             imageUrl,
             price,
-            user: userIdObj // Associate cart item with user ID
+            user: userId // Associate cart item with user ID
         });
 
         // Save the cart item
@@ -218,4 +213,131 @@ const sendWhatsAppMessage = (namaPengguna, cartItems, totalHarga, adminPhoneNumb
 
     // Return the WhatsApp link
     return whatsappLink;
+};
+
+// Get all orders/transactions (Admin only)
+exports.getAllOrders = async (req, res) => {
+    try {
+        console.log("GET /orders - Admin request received");
+        
+        // Get all transactions with user and items populated
+        const orders = await Transaksi.find()
+            .populate('user_id', 'name email') // Populate user info
+            .sort({ createdAt: -1 }); // Sort by newest first
+
+        // Get transaction items for each order
+        const ordersWithItems = await Promise.all(
+            orders.map(async (order) => {
+                const items = await TransaksiItem.find({ transaksi_id: order._id });
+                return {
+                    _id: order._id,
+                    user: order.user_id,
+                    total_harga: order.total_harga,
+                    status: order.status,
+                    createdAt: order.createdAt,
+                    updatedAt: order.updatedAt,
+                    items: items
+                };
+            })
+        );
+
+        res.status(200).json({
+            success: true,
+            count: ordersWithItems.length,
+            data: ordersWithItems
+        });
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching orders',
+            error: error.message
+        });
+    }
+};
+
+// Get user's own orders (User - authenticated)
+exports.getUserOrders = async (req, res) => {
+    try {
+        console.log("GET /my-orders - User request received");
+        
+        // Get user ID from authenticated user (set by protect middleware)
+        const userId = req.user._id;
+
+        // Get all transactions for this user
+        const orders = await Transaksi.find({ user_id: userId })
+            .populate('user_id', 'name email')
+            .sort({ createdAt: -1 }); // Sort by newest first
+
+        // Get transaction items for each order
+        const ordersWithItems = await Promise.all(
+            orders.map(async (order) => {
+                const items = await TransaksiItem.find({ transaksi_id: order._id });
+                return {
+                    _id: order._id,
+                    user: order.user_id,
+                    total_harga: order.total_harga,
+                    status: order.status,
+                    createdAt: order.createdAt,
+                    updatedAt: order.updatedAt,
+                    items: items
+                };
+            })
+        );
+
+        res.status(200).json({
+            success: true,
+            count: ordersWithItems.length,
+            data: ordersWithItems
+        });
+    } catch (error) {
+        console.error("Error fetching user orders:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching your orders',
+            error: error.message
+        });
+    }
+};
+
+// Update order status (Admin only)
+exports.updateOrderStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        // Validate status
+        if (!['pending', 'completed', 'cancelled'].includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid status. Must be: pending, completed, or cancelled'
+            });
+        }
+
+        const order = await Transaksi.findByIdAndUpdate(
+            id,
+            { status },
+            { new: true, runValidators: true }
+        ).populate('user_id', 'name email');
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Order status updated successfully',
+            data: order
+        });
+    } catch (error) {
+        console.error("Error updating order status:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating order status',
+            error: error.message
+        });
+    }
 };

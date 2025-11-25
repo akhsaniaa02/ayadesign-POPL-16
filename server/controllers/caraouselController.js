@@ -1,30 +1,68 @@
 const ImageCarousel = require('../models/imageModels');
+const cloudinary = require('../config/cloudinary');
 
 exports.insertData = async (req, res) => {
-    const { items } = req.body;
-    console.log("Insert request received:", items); // ✅ log request data
+    console.log("Insert request received");
+    console.log("Body:", req.body);
+    console.log("Files:", req.files);
+    
     try {
+        const items = JSON.parse(req.body.items);
+        const files = req.files || [];
+        
         // Validate items array
         if (!items || !Array.isArray(items)) {
             return res.status(400).json({ message: 'Items array is required' });
         }
 
-        // Validate each item
-        for (let item of items) {
-            if (!item.id || !item.title || !item.price || !item.imageUrl) {
-                return res.status(400).json({ message: 'Missing required fields: id, title, price, imageUrl' });
-            }
-        }
+        // Upload files to Cloudinary and process items
+        const uploadPromises = files.map((file) => {
+            return new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    {
+                        folder: 'ayadesign/products',
+                        resource_type: 'auto',
+                        transformation: [
+                            { width: 1000, height: 1000, crop: 'limit' },
+                            { quality: 'auto:good' }
+                        ]
+                    },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result.secure_url);
+                    }
+                );
+                uploadStream.end(file.buffer);
+            });
+        });
 
-        const result = await ImageCarousel.insertMany(items);
-        console.log("Insert success:", result); // ✅ log hasil insert
+        const uploadedUrls = await Promise.all(uploadPromises);
+
+        // Process each item and attach image URLs
+        const processedItems = items.map((item, index) => {
+            // If file uploaded for this item, use Cloudinary URL
+            if (uploadedUrls[index]) {
+                item.imageUrl = uploadedUrls[index];
+            }
+            // Otherwise keep the provided imageUrl (for URL input)
+            
+            // Validate required fields
+            if (!item.id || !item.title || !item.price || !item.imageUrl) {
+                throw new Error('Missing required fields: id, title, price, and image');
+            }
+            
+            return item;
+        });
+
+        const result = await ImageCarousel.insertMany(processedItems);
+        console.log("Insert success:", result);
         res.status(201).json({ 
             message: 'Data inserted successfully',
             count: result.length,
             data: result
         });
     } catch (error) {
-        console.error("Insert error:", error); // ❌ log error
+        console.error("Insert error:", error);
         if (error.code === 11000) {
             res.status(400).json({ message: 'Duplicate ID found. Please use unique IDs.' });
         } else {
@@ -58,5 +96,131 @@ exports.getImageCarousel = async (req, res) => {
     } catch (err) {
         console.error("Error in getImageCarousel:", err); // ❌ log error
         res.status(500).json({ message: 'Server Error', error: err.message });
+    }
+};
+
+// Get all products (for admin panel)
+exports.getAllProducts = async (req, res) => {
+    console.log("GET /products - Admin request received");
+    try {
+        const products = await ImageCarousel.find().sort({ createdAt: -1 });
+        res.status(200).json({
+            success: true,
+            count: products.length,
+            data: products
+        });
+    } catch (error) {
+        console.error("Error fetching products:", error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error fetching products', 
+            error: error.message 
+        });
+    }
+};
+
+// Get single product by ID
+exports.getProductById = async (req, res) => {
+    console.log("GET /product/:id request received");
+    try {
+        const product = await ImageCarousel.findById(req.params.id);
+        
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: product
+        });
+    } catch (error) {
+        console.error("Error fetching product:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching product',
+            error: error.message
+        });
+    }
+};
+
+// Update product
+exports.updateProduct = async (req, res) => {
+    console.log("PUT /product/:id request received");
+    try {
+        const { id, title, description, price, imageUrl, formQuantity, category } = req.body;
+
+        // Find and update product
+        const product = await ImageCarousel.findByIdAndUpdate(
+            req.params.id,
+            {
+                id,
+                title,
+                description,
+                price,
+                imageUrl,
+                formQuantity,
+                category
+            },
+            { new: true, runValidators: true }
+        );
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        console.log("Product updated successfully:", product);
+        res.status(200).json({
+            success: true,
+            message: 'Product updated successfully',
+            data: product
+        });
+    } catch (error) {
+        console.error("Error updating product:", error);
+        if (error.code === 11000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Product ID already exists'
+            });
+        }
+        res.status(500).json({
+            success: false,
+            message: 'Error updating product',
+            error: error.message
+        });
+    }
+};
+
+// Delete product
+exports.deleteProduct = async (req, res) => {
+    console.log("DELETE /product/:id request received");
+    try {
+        const product = await ImageCarousel.findByIdAndDelete(req.params.id);
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        console.log("Product deleted successfully:", product);
+        res.status(200).json({
+            success: true,
+            message: 'Product deleted successfully',
+            data: product
+        });
+    } catch (error) {
+        console.error("Error deleting product:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Error deleting product',
+            error: error.message
+        });
     }
 };

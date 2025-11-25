@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --ext .js --max-warnings 0 || exit 0"
   },
   "author": "",
   "license": "ISC",
@@ -23,5 +24,9 @@
     "moongose": "^1.0.0",
     "multer": "^1.4.5-lts.1",
     "statuses": "^2.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0"
   }
 }

@@ -57,6 +57,16 @@ const ProductCatalog = () => {
     const handleItemClick = (item) => {
         navigate(`/productdetail/${item.id}`, { state: { item } });
     };
+    
+    // Helper function to get full image URL
+    const getImageUrl = (imageUrl) => {
+        // If imageUrl starts with /uploads (local file), prepend baseURL
+        if (imageUrl && imageUrl.startsWith('/uploads')) {
+            return baseURL + imageUrl;
+        }
+        // Otherwise return as-is (Cloudinary URL or external URL)
+        return imageUrl;
+    };
 
     return (
         <Layout>
@@ -72,7 +82,7 @@ const ProductCatalog = () => {
                                     style={{ width: '280px', height: '500px' }}
                                 >
                                     <div className="overflow-hidden">
-                                        <img alt="content" className="object-cover object-center h-96 w-auto" src={item.imageUrl} />
+                                        <img alt="content" className="object-cover object-center h-96 w-auto" src={getImageUrl(item.imageUrl)} />
                                     </div>
                                     <div className="text-center">
                                         <h2 className="text-xl font-medium title-font text-gray-900">{item.title}</h2>
@@ -98,7 +108,7 @@ const ProductCatalog = () => {
                                     style={{ width: '260px', height: '800px' }}
                                 >
                                     <div className="overflow-hidden">
-                                        <img alt="content" className="object-cover object-center h-auto w-auto" src={item.imageUrl} />
+                                        <img alt="content" className="object-cover object-center h-auto w-auto" src={getImageUrl(item.imageUrl)} />
                                     </div>
                                     <div className="text-center">
                                         <h2 className="text-xl font-medium title-font text-gray-900">{item.title}</h2>

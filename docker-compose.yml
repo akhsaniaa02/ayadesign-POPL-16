@@ -1,5 +1,4 @@
 # Docker Compose untuk Ayadesign Application
-version: '3.8'
 
 services:
   ayadesign-app:
@@ -9,8 +8,10 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"  # Backend API
+      - "3001:3001"  # Backend API
       - "5173:5173"  # Frontend
+    env_file:
+      - ./server/.env  # Load environment from server/.env
     environment:
       - NODE_ENV=production
     volumes:
