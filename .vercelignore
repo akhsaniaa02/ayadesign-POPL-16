@@ -1,0 +1,9 @@
+client/
+.github/
+docs/
+*.md
+!README.md
+.git/
+node_modules/
+.env
+.env.*
