@@ -4,19 +4,24 @@ REM Build dan Run Script untuk Docker Container (Windows)
 echo 🚀 Ayadesign Docker Deployment Script
 echo.
 
-REM Check if .env file exists
-if not exist ".env" (
-    echo ⚠️  Warning: .env file not found!
-    echo 📝 Creating .env from .env.docker template...
-    copy .env.docker .env
-    echo.
-    echo ⚡ Please edit .env file and add your credentials:
+REM Check if server/.env file exists
+if not exist "server\.env" (
+    echo ⚠️  Warning: server/.env file not found!
+    echo 📝 Please create server/.env with your credentials:
     echo    - MongoDB Atlas URI
     echo    - JWT Secret
     echo    - Cloudinary credentials
     echo.
-    echo Press any key after editing .env file...
+    echo Example server/.env:
+    echo MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/ayadesign
+    echo JWT_SECRET=your-secret-key
+    echo PORT=3001
+    echo CLOUDINARY_CLOUD_NAME=your_cloud_name
+    echo CLOUDINARY_API_KEY=your_api_key
+    echo CLOUDINARY_API_SECRET=your_api_secret
+    echo.
     pause
+    exit /b 1
 )
 
 echo 🚀 Building Docker Image: team16-popl:submit-UTS

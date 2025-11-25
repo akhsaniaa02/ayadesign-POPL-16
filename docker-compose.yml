@@ -1,5 +1,4 @@
 # Docker Compose untuk Ayadesign Application
-version: '3.8'
 
 services:
   ayadesign-app:
@@ -11,15 +10,10 @@ services:
     ports:
       - "3001:3001"  # Backend API
       - "5173:5173"  # Frontend
+    env_file:
+      - ./server/.env  # Load environment from server/.env
     environment:
       - NODE_ENV=production
-      - MONGO_URI=${MONGO_URI}
-      - JWT_SECRET=${JWT_SECRET}
-      - PORT=3001
-      # Cloudinary credentials
-      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
-      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
-      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
     volumes:
       - ./server/uploads:/app/server/uploads
     networks:
