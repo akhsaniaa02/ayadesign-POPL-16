@@ -5,6 +5,9 @@ const cors = require("cors");
 const path = require("path");
 const authRouter = require('./routes/authRoute');
 const orderRoute = require('./routes/orderRoute');
+const logRoute = require('./routes/logRoute');
+const apiLoggingMiddleware = require('./middlewares/loggingMiddleware');
+const { logError, logEvent } = require('./utils/logToGrafana');
 mongoose.set('strictQuery', true);
 
 // Middlewares
@@ -14,7 +17,8 @@ app.use(cors({
         'https://ayadesignstore.vercel.app',
         'https://ayadesign-muhammadbintang27s-projects.vercel.app', 
         'http://localhost:5173',
-        'https://ayadesign-platform.vercel.app/'
+        'https://ayadesign-platform.vercel.app/',
+        /\.vercel\.app$/
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
@@ -22,7 +26,10 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Request logging middleware
+// Grafana Loki logging middleware (logs all API requests)
+app.use(apiLoggingMiddleware);
+
+// Request logging middleware (console only)
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.url}`);
     next();
@@ -37,6 +44,7 @@ app.get('/', (req, res) => {
 app.use('/auth', authRouter);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve uploaded files
 app.use('/api', orderRoute); // Added /api prefix for better organization
+app.use('/api', logRoute); // Log proxy endpoint for frontend
 
 // 404 handler
 app.use((req, res, next) => {
@@ -50,12 +58,28 @@ app.use((req, res, next) => {
 // MongoDB Connection
 mongoose
     .connect(process.env.MONGO_URI)
-    .then(() => console.log("MongoDB connected"))
-    .catch((err) => console.error('Failed to connect to MongoDB', err));
+    .then(() => {
+        console.log("MongoDB connected");
+        logEvent('mongodb_connected', { database: 'ayadesign' });
+    })
+    .catch((err) => {
+        console.error('Failed to connect to MongoDB', err);
+        logError(err, { context: 'mongodb_connection' });
+    });
 
 // Global error handler
 app.use((err, req, res, next) => {
     console.error('Error:', err);
+    
+    // Log error to Grafana Loki
+    logError(err, {
+        route: req.path,
+        method: req.method,
+        body: req.body,
+        query: req.query,
+        ip: req.ip
+    });
+    
     err.status = err.status || 'error';
     err.statusCode = err.statusCode || 500;
     res.status(err.statusCode).json({
